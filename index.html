@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频管理系统</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <link rel="stylesheet" href="script.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#" id="addVideoPage" onclick="showAddVideoPage()">视频添加</a>
+            <a href="#" id="favoritesPage" onclick="showFavoritesPage()">我的收藏</a>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <div id="messageModal" class="message-modal">
+            <div class="message-modal-content">
+                <span id="closeModal" class="close-button">&times;</span>
+                <p id="modalMessage">这是一个提示信息！</p>
+            </div>
+        </div>
+
+
+        <div id="addVideoSection" class="form-section">
+            <h2>添加视频</h2>
+
+            <div class="input-group">
+                <label for="videoLink">视频链接</label>
+                <input type="url" id="videoLink" placeholder="视频链接" required />
+            </div>
+
+            <div class="input-group">
+                <label for="playLink">播放链接</label>
+                <input type="url" id="playLink" placeholder="播放链接" />
+            </div>
+
+            <div class="input-group">
+                <label for="coverImage">封面图片链接</label>
+                <input type="text" id="coverImage" placeholder="封面图片链接"  />
+            </div>
+
+            <div class="input-group">
+                <label for="title">标题</label>
+                <input type="text" id="title" placeholder="无"  />
+            </div>
+
+            <div class="input-group">
+                <label for="description">简介</label>
+                <textarea id="description" placeholder="无"></textarea>            
+
+            </div>
+
+            <div class="input-group">
+                <label for="protagonist">主角</label>
+                <input type="text" id="protagonist" placeholder="无"  />
+            </div>
+
+            <div class="input-group">
+                <label >标签</label>        
+                <div id="tags" class="tags-container">
+
+                </div>
+
+
+
+            <div class="add-tag">
+                <input type="text" id="newTag" placeholder="输入标签" />
+                <button onclick="searchTags()">搜索</button>
+                <button onclick="addTag()">添加</button>
+            </div>
+
+
+            <div id="selectedTags" class="selected-tags"></div>
+            </div>
+
+
+            <div class="input-group">
+                <label for="rating">评分</label>
+                <select id="rating">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+
+            <button onclick="addVideo()">添加视频</button>
+            <button onclick="importVideos()">视频导入</button>
+            <button onclick="importData()">一键导入</button>
+            <button onclick="exportData()">一键导出</button>
+        </div>
+
+
+        <div id="favoritesSection" class="favorites-section" style="display: none;"> 
+
+            <div class="top-bar">
+                <div class="rating-buttons">
+                    <button onclick="filterByRating('all')">全部</button>
+                    <button onclick="filterByRating(0)">0</button>
+                    <button onclick="filterByRating(1)">1</button>
+                    <button onclick="filterByRating(2)">2</button>
+                    <button onclick="filterByRating(3)">3</button>
+                    <button onclick="filterByRating(4)">4</button>
+                    <button onclick="filterByRating(5)">5</button>
+                </div>
+
+
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索标题、描述、主演" />
+                    <button onclick="searchVideos()">搜索</button>
+                </div>
+            </div>
+
+            <div class="tags-header"> 
+                <div id="ccselectedTags" class="ccselected-tags"></div>
+                <input type="text" id="ccnewTag" placeholder="输入标签" />
+                <div class="action-buttons"> 
+                    <button onclick="ccsearchTags()">搜索</button>
+                    <button onclick="ccaddTag()">添加</button>
+                    <button onclick="ccdeleteTag()">删除</button>
+                </div>
+                <div id="tagsList" class="tags-list">
+
+                    <ul id="tagsUL"></ul>
+                </div>
+            </div>
+
+            <div class="video-header">
+                <div class="video-count">视频数量: <span id="videoCount">0</span></div>
+                <div class="video-controls">
+                  <button id="showButton">显示</button>
+                  <button id="sortButton">排序</button>
+
+
+                  <div class="show-options" id="showOptions" style="display:none;">
+                    <ul>
+                      <li onclick="resetFilters()">正常视频</li>
+                      <li onclick="filterVideos('invalid')">失效视频</li>
+                      <li onclick="filterVideos('duplicate')">重复视频</li>
+                      <li onclick="filterVideos('noTags')">无标签视频</li>
+                    </ul>
+                  </div>
+
+
+                  <div class="sort-options" id="sortOptions" style="display:none;">
+                    <ul>
+                      <li onclick="sortVideos('random')">随机排序</li>
+                      <li onclick="sortVideos('title')">按标题排序</li>
+                      <li onclick="sortVideos('tagsnum')">按标签数量排序</li>
+                      <li onclick="sortVideos('addedTimeAsc')">按导入时间正序</li>
+                      <li onclick="sortVideos('addedTimeDesc')">按导入时间倒序</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="video-list" id="videoList"></div>
+
+
+            <div class="pagination" id="pagination"></div>
+        </div>
+
+        <div id="videoDetailPage" style="display:none;"></div>
+
+        <div id="editForm" style="display:none;" class="form-section">
+            <h2>视频信息编辑</h2>
+            <div class="input-group">
+                <label for="exitVideoLink">视频链接</label>
+                <input type="url" id="exitVideoLink" placeholder="视频链接" required />
+            </div>
+
+            <div class="input-group">
+                <label for="exitPlayLink">播放链接</label>
+                <input type="url" id="exitPlayLink" placeholder="播放链接" />
+            </div>
+
+            <div class="input-group">
+                <label for="exitCoverImage">封面图片链接</label>
+                <input type="text" id="exitCoverImage" placeholder="封面图片链接" />
+            </div>
+
+            <div class="input-group">
+                <label for="exitTitle">标题</label>
+                <input type="text" id="exitTitle" placeholder="无" />
+            </div>
+
+            <div class="input-group">
+                <label for="exitDescription">简介</label>
+                <textarea id="exitDescription" placeholder="无"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="exitProtagonist">主角</label>
+                <input type="text" id="exitProtagonist" placeholder="无" />
+            </div>
+
+            <div class="input-group">
+                <label>标签</label>
+                <div id="exitTags" class="tags-container">
+
+                </div>
+                <div class="add-tag">
+                    <input type="text" id="exitnewTag" placeholder="输入新的标签">
+                    <button onclick="exitsearchTags()">搜索</button>
+                
+                    <button onclick="exitaddTag()">添加</button>
+                </div>
+
+            </div>
+
+            <div class="input-group">
+                <label for="exitRating">评分</label>
+                <select id="exitRating">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+
+            <input type="hidden" id="editVideoId">
+            <button onclick="saveEditedVideo()">保存</button>
+            <button onclick="closeEditForm()">关闭</button>
+        </div>
+
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
