@@ -48,14 +48,17 @@
 基本上用一下就懂，就是得记得收藏完了导出一下文件，因为保存到浏览器本地文件指不定什么时候就丢了，特别是手机上，刷新啥的没事。
 
 文件格式上面有，其中导入文件时"id"和"addedTime"可以没有，到时候导出文件会自动生成。
+![json文件图片](https://github.com/fawumeng404/video_collection/blob/main/readme/1.1.png)
 
 ***注意不要同时导入超过999个视频，这样会导致详情界面打开错误***
 
 其他网站批量导入时可以使用Instant Data Scraper插件导出xlsx表格，再随便用GPT写个python程序就可以生成json文件了，或是用上面的那个py代码改改也行。
 
 视频添加界面和编辑界面的标签的排序是按照拼音首字母排的，想把一些标签放前面就修改priorityTags =["全部","帅气"]就可以。
+![js文件图片](https://github.com/fawumeng404/video_collection/blob/main/readme/1.2.png)
 
 搜索时拼音首字母搜索需要添加一下映射表，不然可能搜索不出来，本来想要拼音库的，不知道为什么一直引入不了，再不就是需要很长时间，后来就决定用映射表了，就修改const pinyinMap ={}；就可以。
+![js文件图片](https://github.com/fawumeng404/video_collection/blob/main/readme/1.3.png)
 
 链接啥的就用猫抓或图片助手啥的就行。
 
