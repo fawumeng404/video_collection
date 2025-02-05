@@ -1825,7 +1825,7 @@ function ccdeleteTag() {
             } else {
                 // 删除标签
                 tagsArray.splice(index, 1);
-                selectedTagsArray = selectedTagsArray.filter(tag => tag !== tagToDelete);  // 删除已选标签中的该标签
+                ccselectedTagsArray = ccselectedTagsArray.filter(tag => tag !== tagToDelete);  // 删除已选标签中的该标签
 
                 // 更新本地存储和标签列表
                 localStorage.setItem('tagsArray', JSON.stringify(tagsArray));
